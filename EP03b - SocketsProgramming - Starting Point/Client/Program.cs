@@ -1,15 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Newtonsoft.Json.Linq;
-using Shared;
 
-namespace Client {
+using Newtonsoft.Json.Linq;
+
+using Shared;
+using Shared.Xml;
+
+namespace Client
+{
 
     public class MyMessage {
         public string StringProperty { get; set; }

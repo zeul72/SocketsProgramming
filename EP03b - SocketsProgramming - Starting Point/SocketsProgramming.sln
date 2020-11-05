@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{FED76E79-EF81-475C-904B-C1F3D5126099}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScratchPad", "ScratchPad\ScratchPad.csproj", "{FB6C5556-BF0D-49EF-BE5A-F9B91C1B156E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScratchPad", "ScratchPad\ScratchPad.csproj", "{54DC5375-A791-4853-8C9C-6EA7004172CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{FED76E79-EF81-475C-904B-C1F3D5126099}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FED76E79-EF81-475C-904B-C1F3D5126099}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FED76E79-EF81-475C-904B-C1F3D5126099}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB6C5556-BF0D-49EF-BE5A-F9B91C1B156E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB6C5556-BF0D-49EF-BE5A-F9B91C1B156E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB6C5556-BF0D-49EF-BE5A-F9B91C1B156E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB6C5556-BF0D-49EF-BE5A-F9B91C1B156E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54DC5375-A791-4853-8C9C-6EA7004172CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54DC5375-A791-4853-8C9C-6EA7004172CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54DC5375-A791-4853-8C9C-6EA7004172CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54DC5375-A791-4853-8C9C-6EA7004172CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
