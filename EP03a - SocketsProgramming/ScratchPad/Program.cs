@@ -67,7 +67,7 @@ namespace ScratchPad
 
             var wrapper = new Func<XDocument,Task<XDocument?>>( async xml => {
                 var @param = XmlSerialization.Deserialize<TParam>(xml);
-                await target(param);
+                await target(@param);
                 return null;
             });
 
@@ -124,9 +124,9 @@ namespace ScratchPad
 
         //Handler on the 'Client' side of the system
         [Route( "/Message[@type='Response' and @action='HeartBeat']" )]
-        public static Task HeartBeatResponseHandler( HeartBeatResponseMessage request )
+        public static Task HeartBeatResponseHandler( HeartBeatResponseMessage response )
         {
-            Console.WriteLine( $"Received Response: {request?.Result?.Status}" );
+            Console.WriteLine( $"Received Response: {response?.Result?.Status}, {response?.Id}" );
             return Task.CompletedTask;
         }
     }
