@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Shared {
@@ -18,8 +19,14 @@ namespace Shared {
 
         public async Task SendAsync<T>( NetworkStream networkStream, T message ) {
             var (header, body) = Encode<T>( message );
-            await networkStream.WriteAsync( header, 0, header.Length );
-            await networkStream.WriteAsync( body, 0, body.Length );
+
+            var output = new byte[header.Length+body.Length];
+            Buffer.BlockCopy( src: header, 0, dst: output, 0, header.Length );
+            Buffer.BlockCopy( src: body, 0, dst: output,  header.Length, body.Length );
+            await networkStream.WriteAsync( output, 0, output.Length );
+
+            //await networkStream.WriteAsync( header, 0, header.Length );
+            //await networkStream.WriteAsync( body, 0, body.Length );
         }
 
         async Task<int> ReadHeader( NetworkStream networkStream ) {

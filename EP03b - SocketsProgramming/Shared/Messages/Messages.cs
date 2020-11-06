@@ -2,7 +2,7 @@
 
 using System.Xml.Serialization;
 
-namespace ScratchPad
+namespace Shared
 {
     /*
       *  <Message type='Request' action='HeartBeat' id='0001'>
@@ -83,6 +83,36 @@ namespace ScratchPad
         {
             Type = MessageType.Response;
             Action = "HeartBeat";
+        }
+    }
+
+    [XmlRoot( "Message" )]
+    public class SubmitBasketRequest : Message
+    {
+
+        [XmlElement( "POS" )]
+        public POSData? POSData { get; set; }
+
+        public SubmitBasketRequest( )
+        {
+            Type = MessageType.Request;
+            Action = "SubmitBasket";
+        }
+    }
+
+    [XmlRoot( "Message" )]
+    public class SubmitBasketResponse : Message
+    {
+        [XmlElement( "Result" )]
+        public Result? Result { get; set; }
+
+        [XmlElement( "POS" )]
+        public POSData? POSData { get; set; }
+
+        public SubmitBasketResponse( )
+        {
+            Type = MessageType.Response;
+            Action = "SubmitBasket";
         }
     }
 }

@@ -16,7 +16,12 @@ namespace Shared.Xml
             return XDocument.Load( xmlReader );
         }
 
-        protected override byte[ ] EncodeBody<T>( T message ) => Encoding.UTF8.GetBytes( XmlSerialization.Serialize( message ).ToString( ) );
-
+        protected override byte[ ] EncodeBody<T>( T message )
+        {
+            if ( message is XDocument )
+                return Encoding.UTF8.GetBytes( message.ToString( ) );
+            else
+                return Encoding.UTF8.GetBytes( XmlSerialization.Serialize( message ).ToString( ) );
+        }
     }
 }
