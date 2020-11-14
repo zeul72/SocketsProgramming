@@ -2,6 +2,8 @@
 
 using System.Xml.Serialization;
 
+using Newtonsoft.Json;
+
 namespace Shared
 {
     /*
@@ -32,24 +34,30 @@ namespace Shared
     public abstract class Message
     {
         [XmlAttribute( "id" )]
+        [JsonProperty( "id" )]
         public string? Id { get; set; }
 
         [XmlAttribute( "type" )]
+        [JsonProperty( "type" )]
         public MessageType Type { get; set; }
 
+
         [XmlAttribute( "action" )]
+        [JsonProperty( "action" )]
         public string? Action { get; set; }
     }
 
     public class POSData
     {
         [XmlAttribute( "id" )]
+        [JsonProperty( "id" )]
         public string? Id { get; set; }
     }
 
     public class Result
     {
         [XmlAttribute( "status" )]
+        [JsonProperty( "status" )]
         public Status Status { get; set; }
     }
 }

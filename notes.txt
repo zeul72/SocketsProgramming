@@ -1,0 +1,38 @@
+EP03c Notes
+Refactor
+  * Message Dispatcher
+IMessageDispatcher<TMessageType>
+- Move core logic into MessageDispatcher`
+- BindController<T>
+- AddHandler
+- HasRouteAttribute(MethodInfo)
+
+- Abstract Methods
+ * GetRouteAttribute
+ * Serialize/Deserialize
+ * IsMatch( RouteAttribute, message )
+
+- RouteAttribute to abstract
+- Add XPathRouteAttribute
+- Refactor XmlDispatcher
+
+- fix up build errors
+
+- JsonRouteAttribute
+- Decorate all Messages with JsonRouteAttribute
+- Add JsonSerialization class
+- JsonDispatcher
+- JsonChannels 
+
+- Echo Server
+ - MessageHandler not static anymore
+ - Add JsonRouteAttributes to MessageHandler
+ - Change MessageDispatcher and Channel to Json version
+
+- Client
+ - MessageHandler not static anymore
+ - Add JsonRouteAttributes to MessageHandler
+ - Change MessageDispatcher and Channel to Json version
+
+
+
