@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
@@ -24,5 +26,9 @@ namespace Shared.Json
         }
         public static JObject Serialize( object @object ) => JObject.FromObject( @object, _serializer );
         public static JObject Deserialize( string json ) => JObject.Parse( json );
+        public static T Deserialize<T>( JObject jobject ) => jobject.ToObject<T>( );
+
+        
+        public static object ToObject( Type type, JObject source ) => source.ToObject( type );
     }
 }

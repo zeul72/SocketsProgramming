@@ -10,7 +10,7 @@ namespace Shared
     public class SubmitBasketResponse : Message
     {
         [XmlElement( "Result" )]
-        [JsonProperty( "result" )]
+        [JsonProperty( "Result" )]
         public Result? Result { get; set; }
 
         [XmlElement( "POSData" )]

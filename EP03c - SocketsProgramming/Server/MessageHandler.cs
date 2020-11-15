@@ -11,7 +11,7 @@ namespace Server
     {
         //Handler on the 'Server' side of the system
         [XPathRoute( "/Message[@type='Request' and @action='HeartBeat']" )]
-        [JsonRoute("$.action","HeartBeat")]
+        [JsonRoute( "$.action", "HeartBeat" )]
         public static Task<HeartBeatResponseMessage> HandleMessage( HeartBeatRequestMessage request )
         {
             Received( request );

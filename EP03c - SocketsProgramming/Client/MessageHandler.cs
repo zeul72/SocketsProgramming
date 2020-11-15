@@ -11,7 +11,7 @@ namespace Client
     {
         //Handler on the 'Client' side of the system
         [XPathRoute( "/Message[@type='Response' and @action='HeartBeat']" )]
-        [JsonRoute( "$.action", "HeartBeat" )]
+        [JsonRoute( "$.action","HeartBeat" )]
         public static Task HandleMessage( HeartBeatResponseMessage response )
         {
             Console.WriteLine( $"Received HeartBeatResponseMessage Response: {response?.Result?.Status}, {response?.Id}" );

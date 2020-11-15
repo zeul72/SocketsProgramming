@@ -41,7 +41,6 @@ namespace Shared
         [JsonProperty( "type" )]
         public MessageType Type { get; set; }
 
-
         [XmlAttribute( "action" )]
         [JsonProperty( "action" )]
         public string? Action { get; set; }

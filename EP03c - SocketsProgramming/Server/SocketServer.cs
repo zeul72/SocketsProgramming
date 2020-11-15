@@ -14,14 +14,14 @@ namespace Server
     public class SocketServer
     {
 
-        //readonly XDocumentMessageDispatcher _messageDispatcher = new XDocumentMessageDispatcher();
-        readonly JsonMessageDispatcher _messageDispatcher = new JsonMessageDispatcher();
+         readonly XDocumentMessageDispatcher _messageDispatcher = new XDocumentMessageDispatcher();
+        //readonly JsonMessageDispatcher _messageDispatcher = new JsonMessageDispatcher();
 
         public SocketServer( )
         {
             //_messageDispatcher.Register<HeartBeatRequestMessage, HeartBeatResponseMessage>( MessageHandler.HandleMessage );
             //_messageDispatcher.Register<SubmitBasketRequest, SubmitBasketResponse>( MessageHandler.HandleMessage );
-            _messageDispatcher.BindController<MessageHandler>( );
+            _messageDispatcher.Bind<MessageHandler>( );
         }
 
 
@@ -46,11 +46,11 @@ namespace Server
                     new Func<IAsyncResult, Socket>(socket.EndAccept),
                     null).ConfigureAwait(false);
 
-                Console.WriteLine( "SOCKET SERVER :: CLIENT CONNECTED" );
+                Console.WriteLine( "ECHO SERVER :: CLIENT CONNECTED" );
 
-                //var channel = new XmlChannel();
-                var channel = new JsonChannel();
-                _messageDispatcher.BindChannel( channel );
+                var channel = new XmlChannel();
+                //var channel = new JsonChannel();
+                _messageDispatcher.Bind( channel );
 
                 channel.Attach( clientSocket );
 

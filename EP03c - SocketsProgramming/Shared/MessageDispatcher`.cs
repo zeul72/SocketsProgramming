@@ -10,29 +10,33 @@ namespace Shared
 {
     public abstract class MessageDispatcher<TMessageType> where TMessageType : class, new()
     {
-        List<(RouteAttribute routeAttribute, Func<TMessageType, Task<TMessageType?>> targetMethod)>
-            Handlers { get; } = new List<(RouteAttribute routeAttribute, Func<TMessageType, Task<TMessageType?>> targetMethod)>( );
 
-        public virtual async Task<TMessageType?> DispatchAsync( TMessageType message )
-        {
-            foreach ( var (route, target) in Handlers ) {
-                if ( IsMatch( route, message ) ) {
-                    return await target( message );
+        readonly List<(RouteAttribute route, Func<TMessageType,Task<TMessageType?>> targetMethod)> _handlers = new List<(RouteAttribute route, Func<TMessageType, Task<TMessageType?>> targetMethod)>();
+
+
+        public void Bind<TProtocol>( Channel<TProtocol, TMessageType> channel )
+            where TProtocol : Protocol<TMessageType>, new()
+            => channel.OnMessage( async m => {
+                var response = await DispatchAsync(m).ConfigureAwait(false);
+                if ( response != null ) {
+                    try {
+                        await channel.SendAsync( response ).ConfigureAwait( false );
+                    } catch ( Exception _e ) {
+                        Console.WriteLine( $"Oh NO!!! {_e}" );
+                    }
                 }
-            }
-            //No handler?? what to do??
-            return null;
-        }
+            } );
 
-        public virtual void BindController<T>( )
+
+        public void Bind<TController>()
         {
             static bool returnTypeIsTask( MethodInfo mi )
-                => mi.ReturnType.IsAssignableFrom( typeof( Task ) );
+             => mi.ReturnType.IsAssignableFrom( typeof( Task ) );
 
             static bool returnTypeIsTaskT( MethodInfo mi )
                 => mi.ReturnType.BaseType?.IsAssignableFrom( typeof( Task ) ) ?? false;
 
-            var methods = typeof(T)
+            var methods = typeof(TController)
                             .GetMethods(BindingFlags.Public|BindingFlags.Static)
                             //must have a route
                             .Where( HasRouteAttribute )
@@ -44,6 +48,7 @@ namespace Shared
             foreach ( var mi in methods ) {
 
                 var wrapper = new Func<TMessageType, Task<TMessageType?>>( async msg => {
+
                     var @param = Deserialize(mi.GetParameters()[0].ParameterType,msg);
                     try {
                         if(returnTypeIsTask(mi))
@@ -55,7 +60,7 @@ namespace Shared
                         } else {
                             var result = (await (mi.Invoke(null,new object[] { @param }) as dynamic) as dynamic);
                             if ( result != null ) {
-                                return Serialize( result.GetType(), result );
+                                return Serialize( result as dynamic );
                             } else
                                 return null;
                         }
@@ -73,29 +78,69 @@ namespace Shared
             }
         }
 
+        private bool HasRouteAttribute( MethodInfo mi ) => GetRouteAttribute( mi ) != null;
 
-        public virtual void BindChannel<TProtocol>( Channel<TProtocol, TMessageType> channel )
-         where TProtocol : Protocol<TMessageType>, new()
-            => channel.OnMessage( async m => {
-                var response = await DispatchAsync(m).ConfigureAwait(false);
-                if ( response != null ) {
-                    try {
-                        await channel.SendAsync( response ).ConfigureAwait( false );
-                    } catch ( Exception _e ) {
-                        Console.WriteLine( $"Oh NO!!! {_e}" );
-                    }
+        public async Task<TMessageType?> DispatchAsync( TMessageType message )
+        {
+            foreach ( var (route, target) in _handlers ) {
+                if ( IsMatch( route, message ) ) {
+                    return await target( message );
                 }
-            } );
+            }
+            //No handler?? what to do??
+            return null;
+        }
 
-        public abstract void Register<TParam, TResult>( Func<TParam, Task<TResult>> target );
-        public abstract void Register<TParam>( Func<TParam, Task> target );
+        protected void AddHandler( RouteAttribute route, Func<TMessageType, Task<TMessageType?>> targetMethod )
+            => _handlers.Add( (route, targetMethod) );
 
-        protected virtual void AddHandler( RouteAttribute routeAttribute, Func<TMessageType, Task<TMessageType?>> handler )
-            => Handlers.Add( (routeAttribute, handler) );
-        protected abstract object Deserialize( Type target, TMessageType data );
-        protected abstract TMessageType Serialize( Type type, object @obj );
         protected abstract bool IsMatch( RouteAttribute route, TMessageType message );
-        protected virtual bool HasRouteAttribute( MethodInfo mi ) => GetRouteAttribute( mi ) != null;
-        protected abstract RouteAttribute? GetRouteAttribute( MemberInfo mi );
+
+        public virtual void Register<TParam, TResult>( Func<TParam, Task<TResult>> target )
+        {
+            if ( !HasAttribute( target.Method ) )
+                throw new Exception( "Missing Required Route Attribute" );
+
+            var wrapper = new Func<TMessageType,Task<TMessageType?>>( async xml => {
+                var @param = Deserialize<TParam>(xml);
+                var result = await target(@param);
+
+                if(result != null)
+                    return Serialize<TResult>(result);
+                else
+                    return null;
+            });
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            AddHandler( GetRouteAttribute( target.Method ), wrapper );
+#pragma warning restore CS8604 // Possible null reference argument.
+        }
+
+
+        protected abstract TParam Deserialize<TParam>( TMessageType message );
+        protected abstract object Deserialize( Type paramType, TMessageType message );
+
+        protected abstract TMessageType? Serialize<T>( T instance );
+
+        public virtual void Register<TParam>( Func<TParam, Task> target )
+        {
+            if ( !HasAttribute( target.Method ) )
+                throw new Exception( "Missing Required Route Attribute" );
+
+            var wrapper = new Func<TMessageType,Task<TMessageType?>>( async xml => {
+                var @param = Deserialize<TParam>(xml);
+                await target(@param);
+                return null;
+            });
+
+#pragma warning disable CS8604 // Possible null reference argument.
+            AddHandler( GetRouteAttribute( target.Method ), wrapper );
+#pragma warning restore CS8604 // Possible null reference argument.
+        }
+
+        protected bool HasAttribute( MethodInfo mi ) => GetRouteAttribute( mi ) != null;
+        protected abstract RouteAttribute? GetRouteAttribute( MethodInfo mi );
+
+
     }
 }
