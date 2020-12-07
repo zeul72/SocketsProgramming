@@ -17,7 +17,8 @@ namespace Shared {
         NetworkStream           _networkStream;
         Task                    _receiveLoopTask;
 
-        public Guid Id => Guid.NewGuid( );
+        //FIXED
+        public Guid Id { get; } = Guid.NewGuid( );
 
         public void Attach( Socket socket )
         {

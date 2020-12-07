@@ -56,7 +56,8 @@ namespace Shared
             } while ( true );
         }
 
-        protected virtual Channel<TProtocol, TMessageType> CreateChannel( ) => new TChannelType( );
+        //FIXED
+        protected virtual TChannelType CreateChannel( ) => new TChannelType( );
 
     }
 }
