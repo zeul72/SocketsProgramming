@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -17,6 +19,12 @@ namespace Shared
 
         const int GROOMING_INTERVAL_MINUTES = 1;    //should come from config/commandline/etc.
         private readonly System.Timers.Timer _groomer = new System.Timers.Timer(GROOMING_INTERVAL_MINUTES * 60 *1000);
+
+
+        public event EventHandler? ChannelAccepted;
+        public event EventHandler? ChannelClosed;
+
+        public int ChannelCount => _channels.Count;
 
         public ChannelManager( Func<IChannel> channelFactory )
         {
@@ -63,12 +71,17 @@ namespace Shared
 
         }
 
-        public void Accept(Socket socket)
+        public void Accept( Socket socket )
         {
             var channel = _channelFactory();
             _channels.TryAdd( channel.Id, channel );
-            channel.Closed += ( s, e ) => _channels.TryRemove( channel.Id, out var _ );
+            channel.Closed += ( s, e ) => {
+                _channels.TryRemove( channel.Id, out var _ );
+                ChannelClosed?.Invoke( this, EventArgs.Empty );
+            };
+
             channel.Attach( socket );   //
+            ChannelAccepted?.Invoke( this, EventArgs.Empty );
         }
 
     }
