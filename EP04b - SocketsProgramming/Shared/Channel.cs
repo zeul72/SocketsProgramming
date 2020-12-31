@@ -41,7 +41,6 @@ namespace Shared {
                 _isClosed = true;
                 _cancellationTokenSource.Cancel( );
                 _networkStream?.Close( );
-                _receiveLoopTask.Wait( );
                 Closed?.Invoke( this, EventArgs.Empty );
             }
         }
