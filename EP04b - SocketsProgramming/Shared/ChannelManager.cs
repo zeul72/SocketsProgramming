@@ -51,7 +51,7 @@ namespace Shared
                 foreach ( var k in deadChannels ) {
                     Console.WriteLine( $"Closing/Removing Dead Channel {k}" );
                     var c = _channels[ k ];
-                    c.Close( );
+                    c.Dispose( );
                     socketsGroomed++;
                 }
 
